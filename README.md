@@ -1,7 +1,7 @@
 # Oracle In-Memory Manual 中文文档
 
 * Auther:Jack Ge
-* Mail:mailto:jack_r_ge@126.com
+* Mail:jack_r_ge@126.com
 
 ## 前言
 
