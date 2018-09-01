@@ -32,5 +32,6 @@
 * 4.1 关于 In-Memory 填充
 * 4.2 启用和禁用 In-Memory 列存储
 * 4.3 In-Memory 表启用和禁用列
+* 4.4 在非 In-Mermory 表上指定INMEMORY列属性
 
 （持续更新中）
