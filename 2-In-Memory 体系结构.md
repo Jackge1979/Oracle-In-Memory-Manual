@@ -338,38 +338,38 @@ CU头包含列的最小值和最大值。 在本示例中，最小值为 Audi，
 
 图 2-9 列数据的存储索引
 
+### 2.2.2 快照元数据单元（SMU）
 
-快照元数据单元（SMU）
 快照元数据单元（SMU）包含关联的IMCU的元数据和事务信息。
 
 此部分包含以下主题：
 
-IMCU 和 SMU
+* IMCU 和 SMU
+
 In-Memory Area的列池存储实际数据：IMCU和IMEU。 In-Memory Area中的元数据池存储SMU。
 
-事务日志（Transaction Journal）
+* 事务日志（Transaction Journal）
+
 每个SMU包含一个事务日志。 数据库使用事务日志来使IMCU在事务上保持一致。
 
+#### 2.2.2.1 IMCU 和 SMU
 
-IMCU 和 SMU
 In-Memory Area 的列池存储实际数据：IMCU和IMEU。 In-Memory Area 中的元数据池存储SMU。
 
-Description of Figure 2-10 follows
+![](http://mmbiz.qpic.cn/mmbiz_png/6F1WRDupvKs0vwRBm8SRbGEkJLyCr997cKWjibppNnJiaW5h1QCVdSAiaSCUmo1XJjBFmlYHx6ftTdEibIo505ooxQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
 图 2-10 IMCU和SMU
 
 此图显示数据池中的IMCU和元数据池中的SMU。
 
 
-
 每个IMCU映射到单独的SMU。 因此，如果列式数据池包含100个IMCU，则元数据池包含100个SMU。 SMU为其关联的IMCU存储多种类型的元数据，包括以下内容：
 
-对象号
+* 对象号
 
-列号
+* 列号
 
-映射行的信息
-
+* 映射行的信息
 
 事务日志（Transaction Journal）
 每个SMU包含一个事务日志。 数据库使用事务日志来使IMCU在事务上保持一致。
