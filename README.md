@@ -1,4 +1,4 @@
-# Oracle In-Memory Manual 中文文档
+# Oracle In-Memory 指南 中文文档
 
 * Author: Jack Ge
 * Mail: jack_r_ge@126.com
