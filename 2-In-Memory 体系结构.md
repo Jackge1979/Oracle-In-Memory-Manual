@@ -1,7 +1,7 @@
 # 第二章 Oracle Database In-Memory 列存储体系结构
   In-Memory 列存储 （IM列存储）在内存中使用为快速扫描优化的列格式存储表和分区。 Oracle数据库使用复杂的架构同时以列和行格式管理数据。
 
-## 2.1 两种格式(dual-format)：列和行**
+## 2.1 两种格式(dual-format)：列和行
 
   启用IM列存储时，SGA在单独的位置管理数据：In-Memory区域和数据库数据库缓冲区高速缓存（Buffer Cache）。
 
@@ -23,22 +23,21 @@
   数据库缓冲区高速缓存（Buffer Cache）中的行数据
 无论IM列存储是启用还是禁用，数据库缓冲区高速缓存（buffer cache）都以相同的方式存储和处理数据块。 缓冲区I / O和缓冲池功能完全相同。
 
-  * **In-Memory 区域中的列数据**
+#### 2.1.1.1 In-Memory Area 中的列数据
 
-  In-Memory  Area 是包含IM列存储的可选SGA组件。
+  In-Memory Area 是包含IM列存储的可选SGA组件。
 
   此部分包含以下主题：
 
-  * In-Memory  Area 的大小
+   * In-Memory Area 的大小
 
-  In-Memory  Area 由 INMEMORY_SIZE 初始化参数控制。 默认情况下，In-Memory  Area 的大小为0，这意味着IM列存储被禁用。
+   In-Memory Area 由 INMEMORY_SIZE 初始化参数控制。 默认情况下，In-Memory Area 的大小为0，这意味着IM列存储被禁用。
 
-  * In-Memory  Area 中的内存池（Memory Pools）
+   * In-Memory Area 中的内存池（Memory Pools）
 
-  In-Memory  Area 分为列数据和元数据的子池。
+   In-Memory Area 分为列数据和元数据的子池。
   
-
-  **In-Memory 区域的大小**
+#### 2.1.1.1.1 In-Memory 区域的大小
 
   内存区域由 INMEMORY_SIZE 初始化参数控制。 默认情况下，内存区域的大小为0，这意味着IM列存储被禁用。
 
