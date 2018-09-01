@@ -22,7 +22,7 @@
 * 2.4 In-Mermory 进程架构
 * 2.5 In-Mermory CPU架构
 
-## 第三章 配置 IM 列存储
+## 第三章 配置 In-Memory 列存储
 
 * 3.1 启用和调整 In-Memory 列存储的大小
 * 3.2 禁用 In-Memory 列存储
@@ -33,8 +33,8 @@
 * 4.2 启用和禁用 In-Memory 列存储
 * 4.3 In-Memory 表启用和禁用列
 * 4.4 在非 In-Mermory 表上指定INMEMORY列属性
-* 4.5 启用和禁用表空间的IM列存储
-* 4.6 为物化视图启用和禁用IM列存储
+* 4.5 启用和禁用表空间的 In-Memory 列存储
+* 4.6 为物化视图启用和禁用 In-Memory 列存储
 * 4.7 强制填充In-Memory对象：教程
 
 （持续更新中）
