@@ -33,5 +33,6 @@
 * 4.2 启用和禁用 In-Memory 列存储
 * 4.3 In-Memory 表启用和禁用列
 * 4.4 在非 In-Mermory 表上指定INMEMORY列属性
+* 4.5 启用和禁用表空间的IM列存储
 
 （持续更新中）
