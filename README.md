@@ -7,11 +7,11 @@
 
 ## 新特性
 
-## 第一章 Oracle Database In-Memory 相关概念
+## 第一章 In-Memory 相关概念
 
 * 1.1 分析应用程序的挑战
 * 1.2 单一格式的用途
-* 1.3 Oracle数据库 In-Memory 解决方案
+* 1.3 Oracle 数据库 In-Memory 解决方案
 * 1.4-In Memory 的先决条件
 
 ## 第二章 In-Memory 体系结构
