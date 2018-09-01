@@ -1,11 +1,11 @@
 # 第二章 Oracle Database In-Memory 列存储体系结构
   In-Memory 列存储 （IM列存储）在内存中使用为快速扫描优化的列格式存储表和分区。 Oracle数据库使用复杂的架构同时以列和行格式管理数据。
 
-### 两种格式(dual-format)：列和行
+**两种格式(dual-format)：列和行**
 
   启用IM列存储时，SGA在单独的位置管理数据：In-Memory区域和数据库数据库缓冲区高速缓存（Buffer Cache）。
 
-#### In-Memory区域
+## 2.1 In-Memory区域
 
   IM列存储以列格式对数据进行编码：每个列是单独的结构。 这些列是连续存储的，它们对分析查询进行优化。 数据库缓冲区高速缓存（buffer cache ）可以修改对象，也可以在IM列存储中填充的对象。 但是，缓冲区高速缓存（buffer cache ）以传统的行格式存储数据。 数据块连续存储行，优化它们的事务。
 
@@ -118,7 +118,7 @@ In-Memory Area       10
 
 在此示例中，分配给子池的内存为9.97 GB，而 In-Memory Area 的大小为10 GB。 数据库使用小百分比的内存用于内部管理结构。
 
-#### 数据库缓冲区高速缓存（Buffer Cache）中的行数据
+2.2 数据库缓冲区高速缓存（Buffer Cache）中的行数据
 
   无论IM列存储是启用还是禁用，数据库缓冲区高速缓存（buffer cache）都以相同的方式存储和处理数据块。 缓冲区I / O和缓冲池功能完全相同。
 
@@ -137,3 +137,22 @@ In-Memory Area       10
 IM列存储支持永久性，堆组织表（heap-organized tables）的每种磁盘数据格式。 列格式不会影响存储在数据文件或缓冲区高速缓存中的数据的格式，也不会影响 undo 数据和联机 redo 日志记录。
 
 数据库以相同的方式处理DML修改，无论是否启用IM列存储，通过更新缓冲区高速缓存（buffer cache）、联机 redo 日志和 undo 表空间。 但是，数据库使用内部机制来跟踪更改，并确保IM列存储与数据库的其余部分一致。 例如，如果 sales 表填充在IM列存储中，并且如果应用程序更新 sales 中的行，则数据库自动使IM列存储中的 sales 表副本保持事务一致。 访问IM列存储的查询始终对访问缓冲区高速缓存（buffer cache）的查询返回相同的结果。
+
+## 2.3 CPU架构：SIMD向量处理（Vector Processing）
+
+对于需要在IM列存储中扫描的数据，数据库使用SIMD（单指令，多数据）向量处理。
+
+IM列存储最大化了可以加载到向量寄存器和求值的列条目的数量。 不是一次一个地评估列中的每个条目，数据库在单个CPU指令中评估一组列值。 SIMD向量处理使数据库能够每秒扫描数十亿行。
+
+例如，应用程序发出查询以查找 sales 表中使用 promo_id 值为 9999 的订单总数。sales 表驻留在IM列存储中。 查询通过仅扫描 sales.promo_id 列开始，如下图所示：
+
+![](http://mmbiz.qpic.cn/mmbiz_png/6F1WRDupvKspYLOUzYSWx6V9Rz0sx3VPWb4q72hRxL05yEEwVibPNRZTsypWxpwjBpm98UJYTGia1hzZNhHW7Oww/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+图 2-12 SIMD向量处理
+
+CPU按如下方式计算数据：
+
+* 将前8个值（数值根据数据类型和压缩模式而变化）从 promo_id 列装入SIMD寄存器，然后将它们与单个指令中的值9999进行比较。
+
+* 丢弃条目。
+
+* 将另外8个值加载到SIMD寄存器中，然后以此方式继续，直到它已评估所有条目。
