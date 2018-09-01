@@ -93,18 +93,18 @@ Oracle数据库管理优先级如下：
 
 当 PRIORITY 设置为 NONE以外的值时，Oracle数据库使用内部管理的优先级队列自动填充对象。在这种情况下，全扫描不是填充的必要条件。数据库执行以下操作：
 
-	* 在数据库实例重新启动后自动填充IM列存储中的列数据
+    * 在数据库实例重新启动后自动填充IM列存储中的列数据
 
-	* 根据指定的优先级排列 INMEMORY 对象的队列数
+    * 根据指定的优先级排列 INMEMORY 对象的队列数
 
     例如，使用 INMEMORY PRIORITYCRITICAL 更改的表优先于使用 INMEMORY PRIORITYHIGH修改的表， INMEMORY PRIORITY HIGH的表优先于 INMEMORY PRIORITYLOW修改的表。如果IM列存储空间不足，则Oracle数据库在空间可用之前不会填充其他对象。
 
-	* 等待从 ALTER TABLE 或 ALTER MATERIALIZED VIEW 语句返回，直到对象的更改记录在IM列存储中
+    * 等待从 ALTER TABLE 或 ALTER MATERIALIZED VIEW 语句返回，直到对象的更改记录在IM列存储中
 
 在IM列存储中填充了段之后，数据库只会在删除或移动段时将其逐出，或者使用 NO INMEMORY 属性更新段。您可以手动或通过ADO策略驱逐段。
 
 
-示例4-1 IM列存储中的对象的填充
+*示例4-1 IM列存储中的对象的填充*
 
 在完成此示例之前，必须为数据库启用IM列存储。
 
