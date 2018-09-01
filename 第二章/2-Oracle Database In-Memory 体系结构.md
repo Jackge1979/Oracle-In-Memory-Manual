@@ -90,29 +90,31 @@
 
   此示例查询 V$INMEMORY_AREA 视图以确定每个子池（包括示例输出）中的可用内存量：
 
-'COL POOL FORMAT a9'
-'COL POPULATE_STATUS FORMAT a15'
-'SSELECT POOL, TRUNC(ALLOC_BYTES/(1024*1024*1024),2) "ALLOC_GB",'
-'        TRUNC(USED_BYTES/(1024*1024*1024),2) "USED_GB",'
-'        POPULATE_STATUS'
-'FROM    V$INMEMORY_AREA;'
+```
+COL POOL FORMAT a9
+COL POPULATE_STATUS FORMAT a15
+SSELECT POOL, TRUNC(ALLOC_BYTES/(1024*1024*1024),2) "ALLOC_GB",
+        TRUNC(USED_BYTES/(1024*1024*1024),2) "USED_GB",
+        POPULATE_STATUS
+FROM    V$INMEMORY_AREA;
 
-'POOL      ALLOC_GB   USED_GB    POPULATE_STATUS'
-'--------- ---------- ---------- ---------------'
-'1MB POOL  7.99       0          DONE'
-'64KB POOL 1.98       0          DONE'
+POOL      ALLOC_GB   USED_GB    POPULATE_STATUS
+--------- ---------- ---------- ---------------
+1MB POOL  7.99       0          DONE
+64KB POOL 1.98       0          DONE
+```
 
   In-Memory area 的当前大小在V$SGA 视图中看到：
 
+```
+SELECT NAME, VALUE/(1024*1024*1024) "SIZE_IN_GB"
+FROM   V$SGA 
+WHERE  NAME LIKE '%Mem%';
 
-'SELECT NAME, VALUE/(1024*1024*1024) "SIZE_IN_GB"'
-'FROM   V$SGA '
-'WHERE  NAME LIKE '%Mem%';'
-
-'NAME                 SIZE_IN_GB'
-'-------------------- ----------'
-'In-Memory Area       10'
-
+NAME                 SIZE_IN_GB
+-------------------- ----------
+In-Memory Area       10
+```
 
 在此示例中，分配给子池的内存为9.97 GB，而 In-Memory Area 的大小为10 GB。 数据库使用小百分比的内存用于内部管理结构。
 
