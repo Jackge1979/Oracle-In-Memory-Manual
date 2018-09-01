@@ -41,5 +41,6 @@
 ## 第五章 In-Memory 表达式
 
 * 5.1 关于 In-Memory 表达式
+* 5.2 配置使用 In-Memory 表达式
 
 （持续更新中）
