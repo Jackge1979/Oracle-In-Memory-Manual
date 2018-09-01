@@ -5,6 +5,8 @@
 
   启用IM列存储时，SGA在单独的位置管理数据：In-Memory区域和数据库数据库缓冲区高速缓存（Buffer Cache）。
 
+#### In-Memory区域
+
   IM列存储以列格式对数据进行编码：每个列是单独的结构。 这些列是连续存储的，它们对分析查询进行优化。 数据库缓冲区高速缓存（buffer cache ）可以修改对象，也可以在IM列存储中填充的对象。 但是，缓冲区高速缓存（buffer cache ）以传统的行格式存储数据。 数据块连续存储行，优化它们的事务。
 
   下图说明了基于行的存储和列式存储之间的区别。
@@ -88,33 +90,33 @@
 
   此示例查询 V$INMEMORY_AREA 视图以确定每个子池（包括示例输出）中的可用内存量：
 
-'COL POOL FORMAT a9
-COL POPULATE_STATUS FORMAT a15
-SSELECT POOL, TRUNC(ALLOC_BYTES/(1024*1024*1024),2) "ALLOC_GB",
-        TRUNC(USED_BYTES/(1024*1024*1024),2) "USED_GB",
-        POPULATE_STATUS
-FROM    V$INMEMORY_AREA;
+'COL POOL FORMAT a9'
+'COL POPULATE_STATUS FORMAT a15'
+'SSELECT POOL, TRUNC(ALLOC_BYTES/(1024*1024*1024),2) "ALLOC_GB",'
+'        TRUNC(USED_BYTES/(1024*1024*1024),2) "USED_GB",'
+'        POPULATE_STATUS'
+'FROM    V$INMEMORY_AREA;'
 
-POOL      ALLOC_GB   USED_GB    POPULATE_STATUS
---------- ---------- ---------- ---------------
-1MB POOL  7.99       0          DONE
-64KB POOL 1.98       0          DONE
-'
+'POOL      ALLOC_GB   USED_GB    POPULATE_STATUS'
+'--------- ---------- ---------- ---------------'
+'1MB POOL  7.99       0          DONE'
+'64KB POOL 1.98       0          DONE'
+
   In-Memory area 的当前大小在V$SGA 视图中看到：
 
-'
-SELECT NAME, VALUE/(1024*1024*1024) "SIZE_IN_GB"
-FROM   V$SGA 
-WHERE  NAME LIKE '%Mem%';
 
-NAME                 SIZE_IN_GB
--------------------- ----------
-In-Memory Area       10
-'
+'SELECT NAME, VALUE/(1024*1024*1024) "SIZE_IN_GB"'
+'FROM   V$SGA '
+'WHERE  NAME LIKE '%Mem%';'
+
+'NAME                 SIZE_IN_GB'
+'-------------------- ----------'
+'In-Memory Area       10'
+
 
 在此示例中，分配给子池的内存为9.97 GB，而 In-Memory Area 的大小为10 GB。 数据库使用小百分比的内存用于内部管理结构。
 
-### 数据库缓冲区高速缓存（Buffer Cache）中的行数据
+#### 数据库缓冲区高速缓存（Buffer Cache）中的行数据
 
   无论IM列存储是启用还是禁用，数据库缓冲区高速缓存（buffer cache）都以相同的方式存储和处理数据块。 缓冲区I / O和缓冲池功能完全相同。
 
