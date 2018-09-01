@@ -2,40 +2,32 @@
 
 ## 第一章 Oracle Database In-Memory 相关概念
 
-* 1.1 Oracle Database In-Memory 简介
+### 1.1 分析应用程序的挑战
 
-* 1.2 In-Memory 列存储体系结构
+### 1.2 单一格式的用途
+### 1.3 Oracle数据库
+### 1.4-In Memory 的先决条件
 
-## 第二章 配置 IM 列存储
+## 2-In-Memory 体系结构
 
-* 2.1 启用和调整IM列存储的大小
+### 2.1-In-Mermory 的两种格式
 
-* 2.2 为 In-Memory 加载启用对象
+### 2.2-In-Mrmory 存储单元
 
-## 第三章 优化 In-Memory 查询
+### 2.3-In-Mermory 表达式统计存储
 
-* 3.1 使用 In-Memory 表达式优化查询
+### 2.4-In-Mermory 进程架构
 
-* 3.2 使用 Join Groups 优化连接
+### 2.5-In-Mermory CPU架构
 
-* 3.3 使用 In-Memory 聚合优化连接
+## 3-配置 IM 列存储
 
-* 3.4 优化 IM 列存储的重新加载
+### 3.1-启用和调整IM列存储的大小
 
-## 第四章 IM列存储高可用
+### 3.2-禁用 IM 列存储
 
-* 4.1 管理IM列存储的 IM FastStart
+## 4-为In-Memory启用填充对象
 
-* 4.2 在 Oracle RAC 中部署IM列存储
+### 4.1-关于In-Memory 填充
 
-* 4.3 使用 Oracle Active Data Guard 部署IM列存储
-
-## 第五章 In-Memory 引用
-
-* 5.1 In-Memory 初始化参数
-
-* 5.2 In-Memory 视图
-
-## 附录 在 Cloud Control 中使用IM列存储
-
-* 词汇表
+### 4.2-启用和禁用IM列存储
