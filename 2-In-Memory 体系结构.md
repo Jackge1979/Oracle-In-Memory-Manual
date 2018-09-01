@@ -51,18 +51,21 @@
 
   与SGA的其他组件（包括buffer cache和shared pool）不同，In-Memory Area 大小不受自动内存管理控制。 当 buffer cache 或 shared pool 需要更多内存时，数据库不会自动缩小 In-Memory Area ，或者当内存空间不足时，增加 In-Memory Area 。 您只能通过手动调整 INMEMORY_SIZE 初始化参数来增加 In-Memory Area 的大小。
 
-  从 Oracle Database 12c Release 2（12.2）开始，可以使用 ALTER SYSTEM 语句动态增加 INMEMORY_SIZE 。 满足以下条件时，数据库分配增加的内存：
+  从 Oracle Database 12c Release 2（12.2）开始，可以使用 ALTER SYSTEM 语句动态增加 INMEMORY_SIZE 。 
+  
+  满足以下条件时，数据库分配增加的内存：
 
   * SGA中有可用的空闲内存。
 
   * INMEMORY_SIZE 的新大小比当前设置大至少128 MB。
 
-  '注:您不能使用 ALTER SYSTEM 来减少 INMEMORY_SIZE。'
+```  
+注:您不能使用 ALTER SYSTEM 来减少 INMEMORY_SIZE。
+```
 
   V$INMEMORY_AREA 和 V$SGA 视图立即反映了更改。
-  
 
-  **In-Memory Area 中的内存池（Memory Pools）**
+#### 2.1.1.1.2 In-Memory Area 中的内存池（Memory Pools）
   
   In-Memory Area 为列数据和元数据的子池。
 
@@ -82,8 +85,9 @@
 
   数据库使用内部启发式算法确定两个子池的相对大小。 数据库将 In-Memory Area 中的大部分空间分配给列式数据池（1 MB pool）。
 
-
-  '注:Oracle数据库自动确定子池大小。 您不能更改空间分配。'
+```
+注:Oracle数据库自动确定子池大小。 您不能更改空间分配。
+```
 
   示例 2-1 V$INMEMORY_AREA 视图
 
@@ -123,7 +127,9 @@ In-Memory Area       10
 
   IM列存储允许在SGA中以传统行格式（缓冲区高速缓存）和列格式同时填充数据。 数据库透明地将OLTP查询（例如主键查找）发送到缓冲区高速缓存，以及分析和报告查询到IM列存储。 在提取数据时，Oracle数据库还可以从同一查询中的两个内存区域读取数据。
 
-  '注:在执行计划中，TABLE ACCESS IN MEMORY FULL 操作表示在IM列存储中访问一些或所有数据。'
+```
+注:在执行计划中，TABLE ACCESS IN MEMORY FULL 操作表示在IM列存储中访问一些或所有数据。
+```
 
   双格式（dual-format）架构不会增加内存需求。 缓冲区高速缓存（buffer cache）被优化为以比数据库的大小小得多的大小运行。
 
@@ -157,9 +163,9 @@ In-Memory 压缩单元（IMCU）是包含用于一个或多个列的数据的压
 
 快照元数据单元（SMU）包含关联的IMCU的元数据和事务信息。
 
-* In-Memory内存表达式单元（IMEU）
+* In-Memory 表达式单元（IMEU）
 
-In-Memory表达式单元（IMEU）是用于实现In-Memory表达式（IM表达式）和用户定义的虚拟列的存储容器。
+In-Memory 表达式单元（IMEU）是用于实现In-Memory表达式（IM表达式）和用户定义的虚拟列的存储容器。
 
 
 ### 2.2.1 In-Memory 压缩单元（IMCU）
@@ -370,19 +376,22 @@ In-Memory Area 的列池存储实际数据：IMCU和IMEU。 In-Memory Area 中�
 
 * 映射行的信息
 
-事务日志（Transaction Journal）
+#### 2.2.2.2 事务日志（Transaction Journal）
+
 每个SMU包含一个事务日志。 数据库使用事务日志来使IMCU在事务上保持一致。
 
 数据库使用缓冲区高速缓存（buffer cache）来处理DML，就像未启用IM列存储一样。 例如，UPDATE 语句可能修改IMCU中的行。 在这种情况下，数据库将已修改行的rowid添加到事务日志，并将其标记为从DML语句的SCN起已过期。 如果查询需要访问该行的新版本，则数据库从数据库缓冲区高速缓存中获取该行。
 
-Description of Figure 2-11 follows
+
+![](http://mmbiz.qpic.cn/mmbiz_png/6F1WRDupvKs0vwRBm8SRbGEkJLyCr997SfgugbnX6vjnkELNgibQqyvt9TlFPaveCA5ay20Fp9gfiaZnIUUG4Z2w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
 图2-11事务日志（Transaction Journal）
 
 数据库通过合并列、事务日志（transaction journal）和缓冲区高速缓存（buffer cache）的内容来实现读取一致性。 当IMCU在重新填充期间刷新时，查询可以直接从IMCU访问最新的行。
 
 
-In-Memory 表达式单元 (IMEU)
+### 2.2.3 In-Memory 表达式单元 (IMEU)
+
 In-Memory Expression Unit (IMEU) 是用于实现内存表达式（IM表达式）和用户定义的虚拟列的存储容器。
 
 数据库将物化表达式视为IMCU中的其他列。 从概念上讲，IMEU是其父IMCU的逻辑扩展。 正如IMCU可以包含多个列，IMEU可以包含多个虚拟列。
@@ -394,7 +403,8 @@ In-Memory Expression Unit (IMEU) 是用于实现内存表达式（IM表达式）
 IMEU是特定段的IMCU的逻辑扩展。 默认情况下，IMEU从基段继承 INMEMORY 子句属性，包括Oracle Real Application Clusters（Oracle RAC）属性，如 DISTRIBUTE 和 DUPLICATE。 您可以选择性地启用或禁用IMEU中存储的虚拟列。 您还可以为不同的列指定压缩级别。
 
 
-表达式统计存储 (ESS)
+## 2.3 表达式统计存储 (ESS)
+
 表达式统计存储（ESS）是由优化器维护的存储关于表达式求值的统计的存储库。 ESS驻留在SGA中，并且仍保留在磁盘上。
 
 启用IM列存储时，数据库会利用ESS的 In-Memory 表达式（IM表达式）功能。 但是，ESS独立于IM列存储。 ESS是数据库的永久组件，不能禁用。
@@ -403,11 +413,11 @@ IMEU是特定段的IMCU的逻辑扩展。 默认情况下，IMEU从基段继承 
 
 对于每个段，ESS维护表达式统计信息，例如：
 
-执行频率
+* 执行频率
 
-评估成本
+* 评估成本
 
-时间戳评估
+* 时间戳评估
 
 优化器根据成本和评估的次数，为每个表达式分配一个加权分数。 这些值是近似值而不是精确值。 更活跃的表达式具有更高的分数。 ESS维护最常访问的表达式的内部列表。
 
@@ -416,19 +426,23 @@ IMEU是特定段的IMCU的逻辑扩展。 默认情况下，IMEU从基段继承 
 ESS信息存储在数据字典中，并在 DBA_EXPRESSION_STATISTICS 视图中显示。 此视图显示优化程序发送到ESS的元数据。 IM表达式在 DBA_IM_EXPRESSIONS 视图中显示为系统生成的虚拟列，前缀为字符串 SYS_IME。
 
 
-In-Memory 进程架构
+## 2.4 In-Memory 进程架构
+
 响应于查询和DML，服务器进程扫描列数据并更新SMU元数据。 后台进程将磁盘中的行数据填充到IM列存储中。
 
 此部分包含以下主题：
 
-In-Memory 协调器进程（IMCO）
+* In-Memory 协调器进程（IMCO）
+
 In-Memory协调器进程（IMCO）管理IM列存储的许多任务。 它的主要任务是启动背景填充和列数据的重新填充。
 
-空间管理工作进程（Wnnn）
+* 空间管理工作进程（Wnnn）
+
 空间管理工作进程（Wnnn）代表IMCO填充或重新填充数据。
 
 
-In-Memory 协调器进程 (IMCO)
+* In-Memory 协调器进程 (IMCO)
+
 In-Memory 协调器进程（IMCO）管理IM列存储的许多任务。 它的主要任务是启动后台填充和列数据的重新填充。
 
 Population是一种流式处理机制，将行数据转换为列格式，然后压缩它。 IMCO自动启动具有除  NONE 之外的任何优先级的 INMEMORY 对象的填充。 当访问优先级为  NONE 的对象时，IMCO使用空间管理工作进程（Wnnn）进程填充它们。
@@ -437,35 +451,33 @@ Population是一种流式处理机制，将行数据转换为列格式，然后�
 
 涓流重新填充（Trickle repopulation）在后台自动发生。 步骤如下：
 
-IMCO 唤醒。
+  1.IMCO 唤醒。
 
-IMCO确定是否需要执行群体任务，包括IMCU中是否存在过时的条目。
+  2.IMCO确定是否需要执行群体任务，包括IMCU中是否存在过时的条目。
 
-如果IMCO找到过时的条目，则它触发空间管理工作进程以重新填充IMCU中的这些条目。
+  3.如果IMCO找到过时的条目，则它触发空间管理工作进程以重新填充IMCU中的这些条目。
 
-IMCO睡眠两分钟，然后返回到步骤1。
+  4.IMCO睡眠两分钟，然后返回到步骤1。
 
+* 空间管理工作进程（Wnnn）
 
-
-
-空间管理工作进程（Wnnn）
 空间管理工作进程（Wnnn）代表IMCO填充或重新填充数据。
 
 在填充期间，Wnnn进程负责创建IMCU、SMU和IMEU。 创建IMEU时，工作进程执行以下任务：
 
-识别人口的虚拟列
+* 识别人口的虚拟列
 
-创建虚拟列值
+* 创建虚拟列值
 
-计算每一行的值，将数据转换为列格式，并压缩它
+* 计算每一行的值，将数据转换为列格式，并压缩它
 
-向空间层注册对象
+* 向空间层注册对象
 
-将IMEU与其对应的IMCU关联
+* 将IMEU与其对应的IMCU关联
 
-注:
-
-在IMEU创建期间，父IMCU仍可用于查询。
+```
+注:在IMEU创建期间，父IMCU仍可用于查询。
+```
 
 在重新填充期间，Wnnn进程基于现有的IMCU和事务日志创建IMCU的新版本，同时临时保留旧版本。 这种机制称为双缓冲。
 
@@ -473,7 +485,7 @@ IMCO睡眠两分钟，然后返回到步骤1。
 
 INMEMORY_MAX_POPULATE_SERVERS 初始化参数控制可以启动用于填充的工作进程的最大数量。INMEMORY_TRICKLE_REPOPULATE_PERCENT 初始化参数控制工作进程可以执行涓流重新填充（trickle repopulation）的最大时间百分比。
 
-## 2.3 CPU架构：SIMD向量处理（Vector Processing）
+## 2.5 CPU架构：SIMD向量处理（Vector Processing）
 
 对于需要在IM列存储中扫描的数据，数据库使用SIMD（单指令，多数据）向量处理。
 
