@@ -155,7 +155,7 @@ inmemory_size                        big integer 10G
 
   * IM列存储的新大小必须比当前 INMEMORY_SIZE 设置大至少128 MB。
   
-  设置步骤：
+  **增加IM列存储的大小**
 
   1.在SQL * Plus或SQL Developer中，使用管理权限登录数据库。
 
@@ -183,7 +183,7 @@ inmemory_size                        big integer 10G
 
   此任务假定在打开的数据库中已启用了IM列存储。
 
-  要禁用IM列存储：
+  **禁用IM列存储**
 
   1.在服务器参数文件（SPFILE）中将 INMEMORY_SIZE 初始化参数设置为 0 。
 
