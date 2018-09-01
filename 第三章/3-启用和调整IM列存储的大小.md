@@ -1,0 +1,192 @@
+# 3 启用和调整IM列存储的大小
+通过指定IM列大小来启用IM列存储。您还可以调整IM列存储的大小或禁用它。
+
+本章包含以下主题：
+
+  * 启用IM列存储概述
+
+  默认情况下，INMEMORY_SIZE  _SIZE初始化参数设置为 0，这意味着IM列存储被禁用。要启用IM列存储，请在重新启动实例之前将初始化参数 INMEMORY_SIZE 设置为非零值。
+
+  * 评估IM列存储的所需大小
+
+  根据您的要求评估IM列存储的大小，然后调整IM列存储的大小以满足这些要求。应用压缩可以减少内存大小。
+
+  * 启用数据库的IM列存储
+
+  在将表或物化视图填充到IM列存储之前，必须为数据库启用IM列存储。
+
+  * 动态增加IM列存储的大小
+
+  当IM列存储需要更多内存时，可以动态增加其大小。
+
+  * 禁用IM列存储
+
+  您可以通过将 INMEMORY_SIZE 初始化参数设置为零来禁用IM列存储，然后重新打开数据库。
+
+## 启用IM列存储概述
+
+  默认情况下， INMEMORY_SIZE 初始化参数设置为 0，这意味着IM列存储被禁用。要启用IM列存储，请在重新启动实例之前将初始化参数 INMEMORY_SIZE 设置为非零值。
+
+  您可以使用 ALTER SYSTEM 语句动态增加 INMEMORY_SIZE 大小设置。
+
+  默认情况下，必须使用表、表空间或物化视图的 CREATE 或ALTER 语句的 INMEMORY子句指定IM列存储中的填充候选项。
+
+## 评估IM列存储的所需大小
+
+  根据您的要求评估IM列存储的大小，然后调整IM列存储的大小以满足这些要求。应用压缩可以减少内存大小。
+
+  IM列存储所需的内存量取决于存储在其中的数据库对象和应用于每个对象的压缩方法。为 INMEMORY 对象选择压缩方法时，请根据可用内存量平衡性能优势：
+
+  * 要最大程度地减少内存大小，请选择 FOR CAPACITY HIGH 或 FOR CAPACITY LOW 压缩方法。但是，这些选项在查询执行期间需要额外的CPU来解压缩数据。
+
+  * 要获得最佳查询性能，请选择 FOR QUERY HIGH 或 FOR QUERY LOW 压缩方法。但是，这些选项消耗更多的内存。
+
+  调整IM列存储大小时，请考虑以下准则：
+
+  1.对于要填充到IM列存储中的每个对象，估计它消耗的内存量。
+
+  Oracle Compression Advisor估计您可以使用 MEMCOMPRESS 子句实现的压缩率。顾问程序使用DBMS_COMPRESSION接口。
+
+  2.将单个数量添加到一起。
+
+  ```
+  注:填充后，V$IM_SEGMENTS 显示磁盘上对象的实际大小及其在IM列存储中的大小。您可以使用此信息来计算填充对象的压缩率。但是，如果对象在磁盘上压缩，则此查询不会显示正确的压缩率。
+  ```
+
+  3.添加额外的空间以应对数据库对象的增长，并在DML操作后存储更新的行版本。
+
+  动态调整大小的最小值为128 MB。
+
+## 启用数据库的IM列存储
+
+  在将表或物化视图填充到IM列存储之前，必须为数据库启用IM列存储。
+
+  **先决条件**
+
+  此任务假定以下内容：
+
+  * 数据库是打开的。
+
+  * COMPATIBLE 初始化参数设置为 12.1.0或更高。
+
+  * INMEMORY_SIZE 初始化参数设置为 0（默认值）。
+
+  **启用IM列存储**
+
+  1.在SQL * Plus或SQL Developer中，使用管理权限登录数据库。
+
+  2.将  INMEMORY_SIZE 初始化参数设置为非零值。
+
+  最小设置为100M。
+  
+
+  使用 ALTER SYSTEM 语句在服务器参数文件（SPFILE）中设置此初始化参数时，必须指定 SCOPE=SPFILE。
+
+  例如，以下语句将In-Memory Area大小设置为10 GB：
+  
+  ```
+   ALTER SYSTEM SET INMEMORY_SIZE = 10G SCOPE=SPFILE;
+  ```
+
+  3.关闭数据库，然后重新打开它。
+
+  必须重新打开数据库才能初始化SGA中的IM列存储。
+
+  4. 可选，检查当前为IM列存储分配的内存量：
+  
+  ```
+  SHOW PARAMETER INMEMORY_SIZE
+  ```
+
+  ```
+  注:启用IM列存储后，您可以动态增加其大小，而无需重新打开数据库。
+  ```
+
+  **启用IM列存储示例3-1**
+
+  假设 INMEMORY_SIZE 初始化参数设置为0.以下SQL * Plus示例将 INMEMORY_SIZE 设置为10 GB，关闭数据库实例，然后重新打开数据库以使更改生效：
+
+```
+SQL> SHOW PARAMETER INMEMORY_SIZE
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- -----
+inmemory_size                        big integer 0
+ 
+SQL> ALTER SYSTEM SET INMEMORY_SIZE=10G SCOPE=SPFILE;
+System altered.
+SQL> SHUTDOWN IMMEDIATE
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+ 
+SQL> STARTUP
+ORACLE instance started.
+ 
+Total System Global Area          11525947392 bytes
+Fixed Size                     8213456 bytes
+Variable Size                754977840 bytes
+Database Buffers              16777216 bytes
+Redo Buffers                   8560640 bytes
+In-Memory Area             10737418240 bytes
+Database mounted.
+Database opened.
+ 
+SQL> SHOW PARAMETER INMEMORY_SIZE
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- -----
+inmemory_size                        big integer 10G
+```
+
+## 动态增加IM列存储的大小
+
+  当IM列存储需要更多内存时，可以动态增加其大小。
+
+  不能动态减少IM列存储的大小。如果将 INMEMORY_SIZE 设置为小于其当前设置的值，则必须在 ALTER SYSTEM 语句中指定 SCOPE=SPFILE。如果通过指定 SCOPE=SPFILE来设置此参数，则必须重新启动数据库才能使更改生效。
+
+  **先决条件**
+
+  要动态增加IM列存储的大小，必须满足以下先决条件：
+
+  * 必须启用列存储
+
+  * 兼容性级别必须为12.2.0或更高
+
+  * 数据库实例必须以SPFILE启动。
+
+  * IM列存储的新大小必须比当前 INMEMORY_SIZE 设置大至少128 MB。
+  
+  设置步骤：
+
+  1.在SQL * Plus或SQL Developer中，使用管理权限登录数据库。
+
+  2.可选，检查当前为IM列存储分配的内存量：
+
+  ```
+  SHOW PARAMETER INMEMORY_SIZE
+  ```
+
+  3.使用指定 SCOPE=BOTH 或 SCOPE=MEMORY的 ALTER SYSTEM语句将INMEMORY_SIZE初始化参数设置为大于IM列存储的当前大小的值。
+
+  当动态设置此参数时，必须将其设置为高于其当前值的值，并且SGA中必须有足够的可用内存，以将IM列存储的大小动态增加到新值。
+
+  例如，以下语句动态地将 INMEMORY_SIZE 设置为 500M：
+
+  ```
+  ALTER SYSTEM SET INMEMORY_SIZE = 500M SCOPE=BOTH;
+  ```
+
+## 禁用IM列存储
+
+  您可以通过将 INMEMORY_SIZE 初始化参数设置为零来禁用IM列存储，然后重新打开数据库。
+
+  **假设**
+
+  此任务假定在打开的数据库中已启用了IM列存储。
+
+  要禁用IM列存储：
+
+  1.在服务器参数文件（SPFILE）中将 INMEMORY_SIZE 初始化参数设置为 0 。
+
+  2.关闭数据库。
+
+  3.启动数据库实例，然后打开数据库。
