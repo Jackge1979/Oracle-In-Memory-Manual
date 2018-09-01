@@ -91,15 +91,17 @@ Oracle数据库管理优先级如下：
 
 * 优先级（Priority-based）的填充
 
-当 PRIORITY 设置为 NONE以外的值时，Oracle数据库使用内部管理的优先级队列自动填充对象。在这种情况下，全扫描不是填充的必要条件。数据库执行以下操作：
+当 PRIORITY 设置为 NONE以外的值时，Oracle数据库使用内部管理的优先级队列自动填充对象。在这种情况下，全扫描不是填充的必要条件。
 
-    * 在数据库实例重新启动后自动填充IM列存储中的列数据
+数据库执行以下操作：
 
-    * 根据指定的优先级排列 INMEMORY 对象的队列数
+* 在数据库实例重新启动后自动填充IM列存储中的列数据*
 
-    例如，使用 INMEMORY PRIORITYCRITICAL 更改的表优先于使用 INMEMORY PRIORITYHIGH修改的表， INMEMORY PRIORITY HIGH的表优先于 INMEMORY PRIORITYLOW修改的表。如果IM列存储空间不足，则Oracle数据库在空间可用之前不会填充其他对象。
+* 根据指定的优先级排列 INMEMORY 对象的队列数*
 
-    * 等待从 ALTER TABLE 或 ALTER MATERIALIZED VIEW 语句返回，直到对象的更改记录在IM列存储中
+例如，使用 INMEMORY PRIORITYCRITICAL 更改的表优先于使用 INMEMORY PRIORITYHIGH修改的表， INMEMORY PRIORITY HIGH的表优先于 INMEMORY PRIORITYLOW修改的表。如果IM列存储空间不足，则Oracle数据库在空间可用之前不会填充其他对象。
+
+* 等待从 ALTER TABLE 或 ALTER MATERIALIZED VIEW 语句返回，直到对象的更改记录在IM列存储中*
 
 在IM列存储中填充了段之后，数据库只会在删除或移动段时将其逐出，或者使用 NO INMEMORY 属性更新段。您可以手动或通过ADO策略驱逐段。
 
@@ -356,87 +358,44 @@ Oracle SQL包括一个 INMEMORY PRIORITY 子句，可以更好地控制队列以
 
 当多个数据库对象的优先级等级不是NONE时，Oracle数据库将根据优先级将要填充到IM列存储中的数据库对象的所有数据排队。首先填充具有CRITICAL 优先级的数据库对象; 接下来填充具有HIGH优先级级别的数据库对象，等等。如果IM列存储中没有剩余空间，则不会在其中填充任何其他对象，直到有足够的空间可用。
 
-
-
+```
 注:
-
 如果将所有对象指定为CRITICAL，则数据库不会将任何对象视为比任何其他对象更关键。
-
-
+```
 
 重新启动数据库时，启动期间将在IM列存储中填充优先级别不为NONE的数据库对象的所有数据。对于优先级为非NONE的数据库对象，在DDL更改记录到IM列存储之前，不会返回涉及数据库对象的 ALTER TABLE 或 ALTERMATERIALIZED VIEWDDL语句。
 
-
-
+```
 注:
+* 优先级设置必须适用于整个表或表分区。不允许为表中不同的列子集指定不同的IM列存储优先级。
+* 如果磁盘上的段为64 KB或更小，则它不会填充到IM列存储中。因此，可能不会填充为IM列存储启用的某些小型数据库对象。
+```
 
-·      优先级设置必须适用于整个表或表分区。不允许为表中不同的列子集指定不同的IM列存储优先级。
+### 4.1.3.3 IM列存储压缩方法
 
-·      如果磁盘上的段为64 KB或更小，则它不会填充到IM列存储中。因此，可能不会填充为IM列存储启用的某些小型数据库对象。
-
-
-IM列存储压缩方法
 根据您的要求，您可以在不同级别压缩内存中的对象。
 
 通常，压缩是一种节省空间的机制。而IM列存储可以压缩数据，并使用一套新的算法提高查询性能。如果使用 FOR DML 或 FOR QUERY 选项压缩列数据，则SQL查询直接对压缩数据执行。因此，扫描和过滤操作在小得多的数据量上执行。数据库仅在结果集需要数据时才解压缩数据。
 
-
-
 V$IM_SEGMENTS 和 V$IM_COLUMN_LEVEL 视图指示当前的压缩级别。您可以使用相应的ALTER命令更改压缩级别。如果当前在IM列存储中填充了表，并且如果更改了 PRIORITY之外的表的任何 INMEMORY 属性，则数据库会从IM列存储中逐出该表。重新填充行为取决于 INMEMORY 设置。
-
 
 
 下表总结了IM列存储中支持的数据压缩方法。
 
 表4-2 IM列存储压缩方法
 
-CREATE/ALTER 语法
-
-描述
-
-NO MEMCOMPRESS
-
-数据不进行压缩。
-
-MEMCOMPRESS FOR DML
-
-此方法产生最佳的DML性能。
-
-除了NO MEMCOMPRESS外，此方法压缩IM列存储数据最少。
-
-MEMCOMPRESS FOR QUERY LOW
-
-此方法产生最佳的查询性能。
-
-此方法会压缩IM列存储数据超过 MEMCOMPRESS FOR DML，但小于 MEMCOMPRESS FOR QUERY HIGH。
-
-当在CREATE 或ALTER  SQL语句中指定INMEMORY 子句而不使用压缩方法时，或者指定MEMCOMPRESS FOR  QUERY 而不包括LOW 或HIGH时，此方法是缺省方法。
-
-MEMCOMPRESS FOR QUERY HIGH
-
-此方法产生良好的查询性能，并节省空间。
-
-此方法压缩IM列存储数据超过MEMCOMPRESS FOR  QUERY LOW，但小于 MEMCOMPRESS FOR CAPACITY LOW。
-
-MEMCOMPRESS FOR CAPACITY LOW
-
-此方法平衡了空间节省和查询性能，偏向于节省空间。
-
-此方法会压缩IM列存储数据超过MEMCOMPRESS FOR  QUERY HIGH，但小于 MEMCOMPRESS FOR CAPACITY HIGH。此方法使用称为Oracle Zip（OZIP）的专有压缩技术，可提供专为Oracle数据库专门调整的极快速解压缩。该数据必须解压缩才能扫描。
-
-当指定MEMCOMPRESS FOR  CAPACITY而不包括LOW 或HIGH时，此方法是默认值。
-
-MEMCOMPRESS FOR CAPACITY HIGH
-
-这种方法导致最佳的空间节省。
-
-此方法最多压缩IM列存储数据。
+|CREATE/ALTER 语法|描述|
+|---|---|
+|NO MEMCOMPRESS|数据不进行压缩。|
+|MEMCOMPRESS FOR DML|此方法产生最佳的DML性能。<br>除了NO MEMCOMPRESS外，此方法压缩IM列存储数据最少。|
+|MEMCOMPRESS FOR QUERY LOW|此方法产生最佳的查询性能。<br>此方法会压缩IM列存储数据超过 MEMCOMPRESS FOR DML，但小于 MEMCOMPRESS FOR QUERY HIGH。<br>当在CREATE 或ALTER  SQL语句中指定INMEMORY 子句而不使用压缩方法时，或者指定MEMCOMPRESS FOR  QUERY 而不包括LOW 或HIGH时，此方法是缺省方法。|
+|MEMCOMPRESS FOR QUERY HIGH|此方法产生良好的查询性能，并节省空间。<br>此方法压缩IM列存储数据超过MEMCOMPRESS FOR  QUERY LOW，但小于 MEMCOMPRESS FOR CAPACITY LOW。|
+|MEMCOMPRESS FOR CAPACITY LOW|此方法平衡了空间节省和查询性能，偏向于节省空间。<br>此方法会压缩IM列存储数据超过MEMCOMPRESS FOR  QUERY HIGH，但小于 MEMCOMPRESS FOR CAPACITY HIGH。此方法使用称为Oracle Zip（OZIP）的专有压缩技术，可提供专为Oracle数据库专门调整的极快速解压缩。该数据必须解压缩才能扫描。<br>当指定MEMCOMPRESS FOR  CAPACITY而不包括LOW 或HIGH时，此方法是默认值。|
+|MEMCOMPRESS FOR CAPACITY HIGH|这种方法导致最佳的空间节省。<br>此方法最多压缩IM列存储数据。|
 
 在SQL语句中，MEMCOMPRESS 关键字必须在INMEMORY 关键字前面。
 
-
-
-Oracle Compression Advisor
+### 4.1.3.4 Oracle Compression Advisor
 
 Oracle Compression Advisor估计您可以使用MEMCOMPRESS 子句实现的压缩率。顾问程序使用DBMS_COMPRESSION接口。
 
