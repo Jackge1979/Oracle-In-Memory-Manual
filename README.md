@@ -27,7 +27,7 @@
 * 3.1 启用和调整 In-Memory 列存储的大小
 * 3.2 禁用 In-Memory 列存储
 
-## 第四章 为In-Memory启用填充对象
+## 第四章 为 In-Memory 启用填充对象
 
 * 4.1 关于 In-Memory 填充
 * 4.2 启用和禁用 In-Memory 列存储
@@ -35,7 +35,9 @@
 * 4.4 在非 In-Mermory 表上指定INMEMORY列属性
 * 4.5 启用和禁用表空间的 In-Memory 列存储
 * 4.6 为物化视图启用和禁用 In-Memory 列存储
-* 4.7 强制填充In-Memory对象：教程
-* 4.8 为IM列存储启用ADO
+* 4.7 强制填充 In-Memory 对象：教程
+* 4.8 为 In-Memory 列存储启用 ADO
+
+## 第五章 In-Memory 表达式
 
 （持续更新中）
