@@ -1,6 +1,6 @@
 # Oracle In-Memory 指南 中文文档
 
-<img src="github.png" width="200" align=center />
+<img src="github.png" width="400" align=center />
 
 * Author: Jack Ge
 * Mail: jack_r_ge#126.com （请将#替换为@）
