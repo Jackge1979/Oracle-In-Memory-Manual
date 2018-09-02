@@ -6,6 +6,15 @@
 |Mail|jack_r_ge#126.com （请将#替换为@）|
 |Website|http://www.sdoug.com |
 
+# 联系我们
+
+如有问题，反馈或问题，请联系：jack_r_ge#126.com （请将#替换为@）
+
+# 许可
+
+Oracle In-Memory 指南 中文文档为免费内容，您可以根据自由重新分发和/或修改它。
+
+Oracle In-Memory 指南 中文文档的发布是希望它有用，但我们不提供任何明示或暗示的担保。 
 
 ## 前言
 
