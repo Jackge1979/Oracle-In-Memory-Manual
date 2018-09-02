@@ -1,8 +1,8 @@
 # Oracle In-Memory 指南 中文文档
 
-* Author:Jack Ge
-* Mail:jack_r_ge#126.com （请将#替换为@）
-* Website:http://www.sdoug.com 
+* Author: Jack Ge
+* Mail: jack_r_ge#126.com （请将#替换为@）
+* Website: http://www.sdoug.com 
 
 # 联系我们
 
