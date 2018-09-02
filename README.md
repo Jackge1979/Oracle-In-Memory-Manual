@@ -1,5 +1,7 @@
 # Oracle In-Memory 指南 中文文档
-![](github.png = 200x)
+
+![](github.png=200x)
+
 * Author: Jack Ge
 * Mail: jack_r_ge#126.com （请将#替换为@）
 * Website: http://www.sdoug.com 
