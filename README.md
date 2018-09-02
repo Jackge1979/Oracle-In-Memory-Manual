@@ -1,13 +1,10 @@
 # Oracle In-Memory 指南 中文文档
 
-* Author: Jack Ge
-* Mail: jack_r_ge#126.com （请将#替换为@）
-
-|章节|网络 ID|
+|Item|Value|
 |---|---|
-|前言|Jack Ge|
-|新特性|Jack Ge|
-|第 1-6 章|Jack Ge|
+|Author|Jack Ge|
+|Mail|jack_r_ge#126.com （请将#替换为@）|
+
 
 # 以下为目前已经完成的内容目录
 
